@@ -1,0 +1,36 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path" : "pages/login/login",
+			"style" : 
+			{
+				"navigationBarTitleText" : "用户登录",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path" : "pages/register/register",
+			"style" : 
+			{
+				"navigationBarTitleText" : "用户注册",
+				"navigationStyle": "default"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "white",
+		"navigationBarTitleText": "仓库平台",
+		"navigationBarBackgroundColor": "#007AFF",
+		"backgroundColor": "#F8F8F8",
+		"backgroundColorTop": "#F4F5F6",
+		"backgroundColorBottom": "#F4F5F6"
+	},
+	"uniIdRouter": {},
+	"easycom": {
+		"autoscan" : true,
+		"custom": {
+			"gui-(.*)" : "@/Grace6/components/gui-$1.vue",
+			"music-(.*)": "@/lib/components/music-$1.vue"
+		}
+	}
+}
