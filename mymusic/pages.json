@@ -15,6 +15,14 @@
 				"navigationBarTitleText" : "用户注册",
 				"navigationStyle": "default"
 			}
+		},
+		{
+			"path" : "pages/login/loginemail",
+			"style" : 
+			{
+				"navigationBarTitleText" : "邮箱登录",
+				"navigationStyle": "custom"
+			}
 		}
 	],
 	"globalStyle": {

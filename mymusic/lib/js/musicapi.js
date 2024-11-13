@@ -10,6 +10,15 @@ const musicapi = {
 			musicuser.setToken(data)
 			success(data)
 		},error)
+	},
+	SendEmail_User: function(email,success,error){
+		musicuser.musicpost('api/email',{email},success,error)
+	},
+	LoginEmail_User: function(email,code,success,error){
+		musicuser.musicpost('api/loginEmail',{email,code},function(data){
+			musicuser.setToken(data)
+			success(data)
+		},error)
 	}
 }
 

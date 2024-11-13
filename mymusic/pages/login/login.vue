@@ -31,7 +31,7 @@
 						<text class="gui-text gui-color-black gui-block-text">|</text>
 					</view>
 					<view>
-						<text class="gui-text gui-color-black gui-block-text">邮箱登录</text>
+						<text class="gui-text gui-color-black gui-block-text" @tap="tologinemail">邮箱登录</text>
 					</view>
 					<view style="margin: 0rpx 20rpx;">
 						<text class="gui-text gui-color-black gui-block-text">|</text>
@@ -101,6 +101,13 @@
 	function toRegister() {
 		uni.navigateTo({
 			url: "/pages/register/register"
+		})
+	}
+	
+	// 跳转邮箱登录界面
+	function tologinemail() {
+		uni.navigateTo({
+			url: "/pages/login/loginemail"
 		})
 	}
 </script>

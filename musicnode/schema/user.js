@@ -18,6 +18,8 @@ const email = joi.string().email().required()
 // dataUri() 指的是如下格式的字符串数据
 // data:image/png;base64,VE9PTUFOWVNFQ1JFVFM=
 const avatar = joi.string().dataUri().required()
+// 验证码的验证规则
+const code = joi.string().length(6).pattern(/^\d+$/).required();
 
 // 注册表单的验证规则对象
 exports.register_schema = {
@@ -35,5 +37,20 @@ exports.login_schema = {
   body: {
     username,
     password
+  }
+}
+
+// 登录表单中发送验证码
+exports.login_sendCode_schema = {
+  body: {
+    email
+  }
+}
+
+// 邮箱登陆的验证规则
+exports.login_email_schema = {
+  body: {
+    email,
+    code
   }
 }

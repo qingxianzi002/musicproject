@@ -7,6 +7,8 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 // 导入全局的配置文件
 const config = require('../config')
+// 导入email配置文件
+const nodeMail = require('../email/nodemailer')
 
 // 注册的具体操作
 exports.register = (req, res) => {
@@ -57,7 +59,7 @@ exports.register = (req, res) => {
 }
 
 // 登录的具体操作
-exports.login = (req,res) => {
+exports.login = (req, res) => {
   console.log("执行登录函数")
   // 接受表单的数据
   const userinfo = req.body
@@ -71,14 +73,115 @@ exports.login = (req,res) => {
     if (err) return res.cc(err)
     // 执行 SQL 语句成功，单丝查询到数据条数不等于1
     if (results.length !== 1) return res.cc('用户名不存在')
-      // 对用户的密码，和数据库中存储的密码进行对比
+    // 对用户的密码，和数据库中存储的密码进行对比
     const compareResult = bcrypt.compareSync(userinfo.password, results[0].password)
     // 如果对比的结果等于 false，则证明用户输入的密码错误
     if (!compareResult) {
       return res.cc('密码错误')
     }
     // 隐藏user部分信息，只保留id, username, email
-    const user = { ...results[0], password: '', avatar: '' }
+    const user = { ...results[0], password: '', avatar: '',code: '' }
+    console.log(user)
+    // 对用户的信息进行加密，生成Token字符串
+    const tokenStr = jwt.sign(user, config.jwtSecretKey, {
+      expiresIn: '168h',
+    })
+    console.log("token打印：" + tokenStr)
+    res.send({
+      status: 0,
+      message: '登录成功！',
+      userid: user.id,
+      token: 'music ' + tokenStr
+    })
+  })
+}
+
+// 发送验证码
+exports.loginSendCode = (req, res) => {
+  const email = req.body.email;
+  const checkEmailSql = `select * from app_user where email = ?`;
+  db.query(checkEmailSql, [email], (err, results) => {
+    if (err) {
+      return res.cc(err);
+    }
+    if (results.length == 0) {
+      return res.cc('邮箱未被注册！');
+    }
+    console.log(email)
+    // 每次发送前清除之前保存的验证码（用户可以多次点击发送验证码）
+    const clearCodeSql = "update app_user set code = null where email = ?";
+    console.log(clearCodeSql)
+    db.query(clearCodeSql, [email], (err, results) => {
+      if (err) {
+        return res.cc(err);
+      }
+      // 产生随机验证码
+      var code = "";
+      for (var i = 0; i < 6; i++){
+        code += Math.floor(Math.random() * 10);
+      }
+      console.log("随机验证码："+code);
+      // 设置收件人信息
+      let options = {
+        // 填写发件人邮箱
+        from: "qxzfckyou@163.com",
+        // 发送至目标邮箱
+        to: req.body.email,
+        // 主题
+        subject: "我的音乐平台邮箱验证",
+        text: `验证码`,
+        // 邮件内容
+        html: `
+          <p>尊敬的用户，您好：</p>
+          <p>您的验证码是：<strong>【${code}】</strong>。请不要把验证码泄露给其他人。</p>
+        `
+      };
+      nodeMail.sendMail(options, (err, info) => {
+        if(err) {
+          res.cc(err);
+        }else{
+          code = bcrypt.hashSync(code, 10);
+          const sendCodeSql = `update app_user set code=? where email=?`;
+          db.query(sendCodeSql, [code,email],(err,results)=>{
+            if(err){
+              res.cc(err);
+            }
+            if(results.affectedRows != 1){
+              return res.cc("发送验证码失败！");
+            }
+            return res.cc("发送验证码成功！",0);
+            // setTimeout(() => {
+              
+            // }, 1000*60);
+          })
+        }
+      })
+    })
+  })
+}
+
+// 邮箱登陆函数
+exports.loginEmail = (req, res) => {
+  console.log("执行邮箱登录函数")
+  console.log(req.body)
+  const sql = `select * from app_user where email = ?`
+  db.query(sql, [req.body.email], function(err, results) {
+    console.log("执行查询邮箱")
+    console.log(results)
+    // 执行SQL语句失败
+    if (err) return res.cc(err)
+    // 执行 SQL 语句成功，查询的数据条数不等于1
+    if (results.length !== 1) {
+      return res.cc('邮箱未注册')
+    }
+    // 对验证码，和数据库中存储的验证码进行对比
+    const compareResult = bcrypt.compareSync(req.body.code, results[0].code)
+    // 如果对比的结果等于 false，则证明用户输入的验证码错误
+    if (!compareResult) {
+      return res.cc('验证码错误')
+    }
+    // 隐藏user部分信息，只保留id, username, email
+    const user = { ...results[0], password: '', avatar: '',code: '' }
     console.log(user)
     // 对用户的信息进行加密，生成Token字符串
     const tokenStr = jwt.sign(user, config.jwtSecretKey, {
