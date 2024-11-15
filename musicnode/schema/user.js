@@ -12,7 +12,7 @@ const username = joi.string().min(3).max(50).required();
 // 密码的验证规则
 const password = joi.string().pattern(/^[\S]{6,50}$/).required()
 // 用户id的验证规则
-const id = joi.number().integer().min(1).required();
+const userid = joi.number().integer().min(1).required();
 // 邮箱email的验证规则
 const email = joi.string().email().required()
 // dataUri() 指的是如下格式的字符串数据
@@ -52,5 +52,13 @@ exports.login_email_schema = {
   body: {
     email,
     code
+  }
+}
+
+// 新密码的验证规则
+exports.new_pwd_schema = {
+  body: {
+    userid,
+    password
   }
 }

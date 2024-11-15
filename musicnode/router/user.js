@@ -6,7 +6,7 @@ const userHandler = require('../router_handler/user')
 // 导入验证表单数据的中间件
 const expressJoi = require('@escook/express-joi')
 // 导入需要验证规则对象
-const { register_schema,login_schema,login_sendCode_schema,login_email_schema } = require('../schema/user')
+const { register_schema,login_schema,login_sendCode_schema,login_email_schema,new_pwd_schema } = require('../schema/user')
 
 // 注册请求
 router.post('/register', expressJoi(register_schema), userHandler.register)
@@ -16,5 +16,9 @@ router.post('/login', expressJoi(login_schema), userHandler.login)
 router.post('/email', expressJoi(login_sendCode_schema), userHandler.loginSendCode)
 // 邮箱登陆请求
 router.post('/loginEmail', expressJoi(login_email_schema), userHandler.loginEmail)
+// 找回密码验证邮箱验证码请求
+router.post('/forgetCode', expressJoi(login_email_schema), userHandler.forgetCode)
+// 找回密码更新新密码请求
+router.post('/forgetNewPwd', expressJoi(new_pwd_schema), userHandler.forgetNewPwd)
 // 将路由对象共享出去
 module.exports = router

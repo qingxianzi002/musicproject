@@ -37,7 +37,7 @@
 						<text class="gui-text gui-color-black gui-block-text">|</text>
 					</view>
 					<view>
-						<text class="gui-text gui-color-black gui-block-text">忘记密码</text>
+						<text class="gui-text gui-color-black gui-block-text" @tap="toforgetpwd">忘记密码</text>
 					</view>
 				</view>
 			</view>
@@ -108,6 +108,13 @@
 	function tologinemail() {
 		uni.navigateTo({
 			url: "/pages/login/loginemail"
+		})
+	}
+	
+	// 跳转忘记密码界面
+	function toforgetpwd() {
+		uni.navigateTo({
+			url: "/pages/forgetpwd/forgetpwd"
 		})
 	}
 </script>

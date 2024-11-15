@@ -196,3 +196,52 @@ exports.loginEmail = (req, res) => {
     })
   })
 }
+
+// 找回密码的邮箱验证码函数
+exports.forgetCode = (req, res) => {
+  console.log("执行验证验证码的函数")
+  console.log("执行邮箱登录函数")
+  console.log(req.body)
+  const sql = `select * from app_user where email = ?`
+  db.query(sql, [req.body.email], function(err, results) {
+    // 执行SQL语句失败
+    if (err) return res.cc(err)
+    // 执行 SQL 语句成功，查询的数据条数不等于1
+    if (results.length !== 1) {
+      return res.cc('邮箱未注册')
+    }
+    // 对验证码，和数据库中存储的验证码进行对比
+    const compareResult = bcrypt.compareSync(req.body.code, results[0].code)
+    // 如果对比的结果等于 false，则证明用户输入的验证码错误
+    if (!compareResult) {
+      return res.cc('验证码错误')
+    }
+    res.send({
+      status: 0,
+      message: "验证成功！",
+      userid: results[0].id
+    })
+  })
+}
+
+// 找回密码的设置新密码函数
+exports.forgetNewPwd = (req, res) => {
+  console.log("执行设置新密码函数")
+  console.log(req.body)
+  // 获取前端传来的参数
+  const userinfo = req.body;
+  // 对用户的新密码进行 bcrypt 加密，返回值为加密后的字符串
+  userinfo.password = bcrypt.hashSync(req.body.password,10)
+  // 根据用户id进行对密码的更新
+  const sql = `update app_user set password = ? where id=?`;
+  db.query(sql, [userinfo.password, userinfo.userid], function(err, results) {
+    console.log(results)
+    // 执行SQL语句失败
+    if (err) return res.cc(err)
+    // 执行 SQL 语句成功，更新数据条数不等于1
+    if (results.affectedRows !== 1) {
+      res.cc('设置新密码失败')
+    }
+    res.cc('新密码设置成功',0)
+  })
+}

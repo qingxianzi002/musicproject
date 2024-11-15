@@ -19,6 +19,12 @@ const musicapi = {
 			musicuser.setToken(data)
 			success(data)
 		},error)
+	},
+	ForgetCode_User: function(email,code,success,error){
+		musicuser.musicpost('api/forgetCode',{email,code},success,error)
+	},
+	ForgetPwd_User: function(userid,password,success,error){
+		musicuser.musicpost('api/forgetNewPwd',{userid,password},success,error)
 	}
 }
 

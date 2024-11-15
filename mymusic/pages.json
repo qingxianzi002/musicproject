@@ -23,6 +23,28 @@
 				"navigationBarTitleText" : "邮箱登录",
 				"navigationStyle": "custom"
 			}
+		},
+		{
+			"path" : "pages/forgetpwd/forgetpwd",
+			"style" : 
+			{
+				"navigationBarTitleText" : "",
+				"navigationStyle": "default"
+			}
+		},
+		{
+			"path" : "pages/forgetpwd/forgetCode",
+			"style" : 
+			{
+				"navigationBarTitleText" : ""
+			}
+		},
+		{
+			"path" : "pages/forgetpwd/forgetNewPwd",
+			"style" : 
+			{
+				"navigationBarTitleText" : ""
+			}
 		}
 	],
 	"globalStyle": {
